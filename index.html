@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="학교에서 잃어버린 물건과 주운 물건을 연결하는 분실물 서비스">
+  <title>학교 분실물 자동 매칭 서비스</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="categories.js" defer></script>
+  <script src="matching.js" defer></script>
+  <script src="db.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="site-header"><div class="header-inner"><a class="brand" href="./index.html" aria-label="학교 분실물 서비스 홈"><span class="brand-icon" aria-hidden="true">↔</span>우리 학교 분실물</a><span class="header-note">학교 안의 물건, 다시 주인에게</span></div></header>
+  <main>
+    <section class="intro" aria-labelledby="page-title"><p class="eyebrow">LOST & FOUND</p><h1 id="page-title">학교 분실물<br>자동 매칭 서비스</h1><p class="description">잃어버린 물건이 있나요? 주인을 기다리는 물건이 있나요?<br>분실물과 습득물 정보를 한곳에서 확인하세요.</p></section>
+    <section class="actions" aria-label="물건 등록 유형 선택">
+      <article class="action-card lost"><span class="step-label">물건을 잃어버렸어요</span><h2>찾고 있는 물건을 알려주세요.</h2><p>물건의 종류와 색, 잃어버린 장소를 정리해 두세요.</p><button type="button" data-register="lost" aria-haspopup="dialog">분실물 등록 <span aria-hidden="true">↗</span></button></article>
+      <article class="action-card found"><span class="step-label">물건을 주웠어요</span><h2>주인을 찾는 데 함께해 주세요.</h2><p>발견한 장소와 현재 보관 중인 장소를 확인해 주세요.</p><button type="button" data-register="found" aria-haspopup="dialog">습득물 등록 <span aria-hidden="true">↗</span></button></article>
+    </section>
+    <section class="recent" aria-labelledby="recent-title">
+      <div class="section-heading"><h2 id="recent-title">최근 게시글</h2><span class="count">조회 중</span><button type="button" class="text-button" id="refresh-posts">새로고침</button></div>
+      <p class="field-help">물건 정보는 공개됩니다. 이름·전화번호 등 개인정보는 적지 마세요. 반환 완료는 작성한 브라우저에서 할 수 있으며, 브라우저 데이터를 지우면 관리 권한을 복구할 수 없습니다.</p>
+      <p id="list-status" role="status">DB에서 게시글을 불러오는 중입니다.</p>
+      <div id="post-list" class="post-grid"></div>
+    </section>
+  </main>
+  <footer><p>학교 분실물 자동 매칭 서비스</p><p>물건을 전달하기 전, 특징을 확인해 주인을 확인해 주세요.</p></footer>
+  <dialog id="registration-dialog" aria-labelledby="dialog-title" aria-describedby="dialog-description">
+    <div class="dialog-content">
+      <div class="dialog-header"><p class="eyebrow">물건 정보 입력</p><button type="button" id="close-dialog" class="text-button" aria-label="등록 창 닫기">닫기</button></div>
+      <h2 id="dialog-title"></h2><p id="dialog-description">필수 항목을 확인한 뒤 DB에 저장하고 비슷한 물건을 찾아보세요. 이름·전화번호는 적지 마세요.</p>
+      <form id="registration-form">
+        <div class="form-grid">
+          <label>색상 (필수)<select name="color" required><option value="">색상 선택</option></select></label>
+          <label>물건 종류 (필수)<select name="itemType" required><option value="">종류 선택</option></select></label>
+          <label class="full-width"><span id="location-label">잃어버린 장소 (필수)</span><select name="location" required><option value="">장소 선택</option></select></label>
+          <label class="full-width"><span id="detail-label">세부 위치 (선택)</span><input name="locationDetail" maxlength="100" placeholder="예: 본관 2층, 5반 교실" aria-describedby="location-help"></label>
+          <p class="field-help full-width" id="location-help">교실은 반을, 계단·화장실 등은 건물·층을 적어 주세요. 목록에 없는 장소는 기타를 선택해 입력할 수 있습니다.</p>
+          <label class="full-width"><span id="date-label">잃어버린 날짜 (필수)</span><input name="date" type="date" required></label>
+          <label class="full-width">물건 특징 (필수)<textarea name="features" rows="3" maxlength="500" required placeholder="브랜드, 무늬, 흠집 등 물건을 구별할 수 있는 특징을 적어 주세요."></textarea></label>
+          <label class="full-width" id="storage-field" hidden>현재 보관 장소 (필수)<input name="storageLocation" maxlength="100" placeholder="예: 본관 1층 교무실"></label>
+        </div>
+        <p class="field-help">기타 색상·종류를 선택했다면 특징에 자세히 적어 주세요.</p>
+        <button class="close-button" type="submit">입력 내용 확인</button>
+      </form>
+      <section id="input-preview" hidden aria-labelledby="preview-title" tabindex="-1">
+        <h3 id="preview-title">입력 내용 확인</h3><p class="preview-note" role="status">입력값을 확인했습니다. 아직 저장되거나 게시되지 않았습니다.</p><dl id="preview-values"></dl>
+        <button type="button" id="edit-input" class="close-button">입력 내용 수정</button>
+        <button type="button" id="save-input" class="close-button">게시글 저장</button>
+        <p id="save-status" role="status"></p>
+        <button type="button" id="match-input" class="close-button">DB 게시글로 추천 확인</button>
+        <section id="match-results" hidden tabindex="-1" aria-labelledby="match-title">
+          <h3 id="match-title">비슷한 물건 추천</h3>
+          <p class="preview-note">DB의 최근 200건을 기준으로 비교합니다. 최대 12점이며 물건이 같을 확률을 뜻하지 않습니다. 반대 유형만 비교하고 반환 완료·0점은 제외합니다.</p>
+          <details><summary>점수와 정렬 기준</summary><p>색·종류는 동일하면 각 3점(기타 제외). 장소는 동일하거나 급식실↔급식실 앞이면 2점. 교실·계단·화장실·정수기·신발장은 세부 위치도 같아야 합니다. 기타·모름은 제외합니다. 날짜는 차이 3일 이내 2점, 특징은 두 글자 이상 공통 단어가 있으면 2점입니다. 특징은 띄어쓰기·문장부호로 나누므로 표현이 다르면 놓칠 수 있습니다. 동점은 날짜 차이, 게시글 ID 순으로 정렬합니다.</p></details>
+          <p id="match-count" role="status"></p><div id="match-list"></div>
+        </section>
+      </section>
+    </div>
+  </dialog>
+</body>
+</html>

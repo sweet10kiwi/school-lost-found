@@ -1,0 +1,12 @@
+.git
+.gitignore
+README.md
+.env
+.env.*
+node_modules
+tmp
+*.log
+.vercel
+
+server
+sample-data.js

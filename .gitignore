@@ -1,0 +1,22 @@
+# 설치 파일과 빌드 결과
+node_modules/
+dist/
+build/
+.vercel/
+
+# 인증 정보 및 개인 설정
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 임시 작업 파일
+tmp/
+~$*
+*.bak
+
+.vercel
+.env*
